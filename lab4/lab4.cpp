@@ -12,9 +12,28 @@ struct Node {
 
 struct Node* root;
 
+int find(struct Node* r, int find_data) {
+	int f = 0;
+	if (r->data == find_data) {
+		f=1;
+	}
+	else if (r->data < find_data && r->left != NULL) {
+		f=find(r->left, find_data);
+	}
+	else if (r->data > find_data && r->right != NULL)
+	{
+		f=find(r->right, find_data);
+	}
+	else {
+		f=0;
+	}
+
+	return f;
+}
 
 struct Node* CreateTree(struct Node* root, struct Node* r, int data)
 {
+	int m = 0;
 	if (r == NULL)
 	{
 		r = (struct Node*)malloc(sizeof(struct Node));
@@ -34,31 +53,20 @@ struct Node* CreateTree(struct Node* root, struct Node* r, int data)
 		return r;
 	}
 
-	if (data > r->data)
-		CreateTree(r, r->left, data);
-	else
-		CreateTree(r, r->right, data);
-
+	m = find(r, data);
+	if (m == 0) {
+		if (data > r->data )
+			CreateTree(r, r->left, data);
+		else
+			CreateTree(r, r->right, data);
+	}
+	else {
+		printf("Элемент уже есть\n");
+	}
 	return root;
 }
 
-int find_input(struct Node* r, int find_data, int count_fun, int m) {
-	if (r->data == find_data) {
-		count_fun += 1;
-	}
-	if (m < count_fun) {
-		m=count_fun;
-	}
-	if( r->left!=NULL){
-		m=find_input(r->left, find_data, count_fun, m);
-	}
-	if(r->right != NULL)
-	{
-		m=find_input(r->right, find_data, count_fun, m);
-	}
-	
-	return m;
-}
+
 
 void print_tree(struct Node* r, int l)
 {
@@ -84,7 +92,7 @@ void print_tree(struct Node* r, int l)
 int main()
 {
 	setlocale(LC_ALL, "");
-	int D, start = 1, count=0;
+	int D, start = 1;
 
 	root = NULL;
 	printf("-1 - окончание построения дерева\n");
@@ -103,12 +111,7 @@ int main()
 	}
 
 	print_tree(root, 0);
-	printf("Введите число которое необходимо найти: ");
-	scanf_s("%d", &D);
-	count=find_input(root, D, count, 0);
-	printf("Элемент встретился %d раз", count);
-
-
+	
 	printf("\nконец");
 	scanf_s("%d", &D);
 	return 0;
